@@ -3,14 +3,15 @@
 # ============= 若启用 则打开注释 ========================
 # ============= 本质：PACKAGES字符串拼接 ================
 # 硬路由闪存小建议精简代理插件，防止固件过大编译失败
+# 已精简：移除QuickFile、Lucky，Passwall仅保留Xray，搭配files内置开机内存优化脚本
 
 # 首页向导（依赖iStore，未启用）
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-i18n-quickstart-zh-cn"
 # Run安装器（和quickfile冲突，禁用）
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-run"
 
-## 1、启用QuickFile网页文件管理器（bash依赖+主程序+汉化）
-CUSTOM_PACKAGES="$CUSTOM_PACKAGES bash quickfile luci-app-quickfile luci-i18n-quickfile-zh-cn"
+## 1、禁用QuickFile网页文件管理器（占用常驻内存，编译不打包）
+#CUSTOM_PACKAGES="$CUSTOM_PACKAGES bash quickfile luci-app-quickfile luci-i18n-quickfile-zh-cn"
 
 # 极光主题（按需开启）
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-theme-aurora luci-app-aurora-config luci-i18n-aurora-config-zh-cn"
@@ -22,16 +23,18 @@ CUSTOM_PACKAGES="$CUSTOM_PACKAGES bash quickfile luci-app-quickfile luci-i18n-qu
 # SSR-PLUS（和Passwall2二选一，这里关闭）
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES kmod-nft-tproxy kmod-nft-socket xray-core naiveproxy luci-app-ssr-plus luci-i18n-ssr-plus-zh-cn"
 
-## 2、启用Passwall2全套代理（依赖内核模块+核心程序+面板汉化）
-CUSTOM_PACKAGES="$CUSTOM_PACKAGES geoview xray-core sing-box hysteria kmod-nft-socket kmod-nft-tproxy luci-app-passwall2 luci-i18n-passwall2-zh-cn"
+## 2、Passwall2 极致精简 仅Xray核心，移除sing-box/hysteria大内存内核
+CUSTOM_PACKAGES="$CUSTOM_PACKAGES geoview xray-core kmod-nft-socket kmod-nft-tproxy luci-app-passwall2 luci-i18n-passwall2-zh-cn"
+# 高内存内核注释不编译
+#CUSTOM_PACKAGES="$CUSTOM_PACKAGES sing-box hysteria"
 
 # IPTV组播转发（按需开启）
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-rtp2httpd luci-i18n-rtp2httpd-zh-cn"
 # Clashoo（与Nikki冲突，关闭）
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES clashoo luci-app-clashoo luci-i18n-clashoo-zh-cn"
 
-## 3、启用Lucky大吉 端口转发/SSL/域名分流工具
-CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-lucky lucky luci-i18n-lucky-zh-cn"
+## 3、移除Lucky大吉（常驻内存高，编译不打包）
+#CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-lucky lucky luci-i18n-lucky-zh-cn"
 
 # Daed、计划任务（按需开启）
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-i18n-daed-zh-cn"
@@ -46,7 +49,7 @@ CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-lucky lucky luci-i18n-lucky-zh-cn"
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES geoview xray-core sing-box hysteria luci-i18n-passwall-zh-cn"
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-openclash luci-compat kmod-tun kmod-inet-diag kmod-nft-tproxy bash curl ip-full unzip"
 
-# 原有VPN组网（保留）
+# 原有VPN组网（保留WireGuard+Tailscale刚需）
 CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-proto-wireguard"
 CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-tailscale-community luci-i18n-tailscale-community-zh-cn"
 
@@ -192,3 +195,7 @@ CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-tailscale-community luci-i18n-tailsca
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-i18n-wifischedule-zh-cn"
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-i18n-xinetd-zh-cn"
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-i18n-xlnetacc-zh-cn"
+
+# 配套说明：
+# 需手动在源码 files/etc/init.d/ 放置 mem_optimize 开机内存优化脚本并赋予执行权限
+# 脚本无需在此文件添加包名，属于files内置文件，编译自动打包进固件
